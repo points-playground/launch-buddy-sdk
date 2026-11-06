@@ -1,0 +1,49 @@
+{
+  "name": "@launch-buddy/server",
+  "version": "0.5.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "prepack": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/points-playground/launch-buddy-sdk.git",
+    "directory": "packages/server"
+  },
+  "description": "Launch Buddy server signup and payment helpers",
+  "homepage": "https://github.com/points-playground/launch-buddy-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/points-playground/launch-buddy-sdk/issues"
+  }
+}

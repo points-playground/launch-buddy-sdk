@@ -1,0 +1,65 @@
+{
+  "name": "@launch-buddy/web",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepack": "pnpm build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/points-playground/launch-buddy-sdk.git",
+    "directory": "packages/web"
+  },
+  "description": "Launch Buddy browser visit tracker and React component",
+  "homepage": "https://github.com/points-playground/launch-buddy-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/points-playground/launch-buddy-sdk/issues"
+  }
+}
