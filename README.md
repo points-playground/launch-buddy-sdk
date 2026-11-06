@@ -42,10 +42,10 @@ Render it once. Initialization lasts for the document's lifetime, including afte
 ```ts
 import { init } from '@launch-buddy/web';
 
-const client = init({ projectKey: process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY });
+const client = init({ projectKey: import.meta.env.VITE_LAUNCH_BUDDY_PROJECT_KEY });
 ```
 
-For plain JavaScript, configure your bundler to expose `NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY` through its environment variable support.
+Read the key from your bundler's public environment variables. The example uses Vite's `VITE_LAUNCH_BUDDY_PROJECT_KEY`. For other bundlers, use their public environment variable support. In Next.js, keep `NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY`.
 
 `init` returns a client with `anonymousId()`, `pageView()`, `heartbeat()`, and `version`, or `undefined` on the server or for invalid options. It sends the first page view automatically. It sends heartbeats every 30 seconds while visible and when the page becomes visible.
 
@@ -99,10 +99,10 @@ Copy this prompt into your coding agent:
 ```text
 Add Launch Buddy to this app so I can watch my launch.
 1. Install @launch-buddy/web with the package manager this repo uses. Install @launch-buddy/server only if this site has a backend that records signups or payments.
-2. Read the browser key from NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY. Set it to my project's test key in .env.local for local development and to my project's live key in the production environment. Localhost belongs on the test key, not the live key. For React or Next.js, render <LaunchBuddy projectKey={process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY!} /> from @launch-buddy/web/react once in the root layout. For plain JavaScript, call init({ projectKey: process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY }) from @launch-buddy/web once in the browser, using the bundler's environment variable support.
+2. Read the browser key from your bundler's public environment variables. For Next.js, use NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY and render <LaunchBuddy projectKey={process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY!} /> from @launch-buddy/web/react once in the root layout. For plain JavaScript, call init({ projectKey }) from @launch-buddy/web once in the browser. In Vite, read projectKey from import.meta.env.VITE_LAUNCH_BUDDY_PROJECT_KEY. For React with Vite, pass that key to <LaunchBuddy /> once near the root. Set the variable to my project's test key in .env.local for local development and to my project's live key in the production environment. Localhost belongs on the test key, not the live key.
 3. If the backend records signups or payments, put LAUNCH_BUDDY_SERVER_KEY in .env.local without a NEXT_PUBLIC_ prefix. Use the matching test server key locally and live server key in the production server environment. Create a server-only client with createLaunchBuddyServer() from @launch-buddy/server, using LAUNCH_BUDDY_SERVER_KEY from the server environment. If the backend creates accounts, find that code (Better Auth, Clerk or your own). Right after it succeeds, call client.signup({ userId, anonymousId: anonymousIdFrom(request) }). For Better Auth, use createBetterAuthSignupAfterHook(client). For Clerk, call trackVerifiedClerkWebhook(client, { event, webhookId }) only after verifying its signature.
 4. If the backend has a Stripe webhook, after the signature check passes, call trackVerifiedStripeEvent(client, { event }) with the verified event. It extracts the amount and currency. Send no emails and no card details. Never expose the server key in browser code.
-5. Run the app and open the home page. Ask me to confirm that the visit shows up in Launch Buddy, since you cannot see my dashboard. Then list every file you changed.
+5. Run the app and open the home page. Ask me to confirm that the visit shows up in Launch Buddy, since you cannot see my dashboard. If no visit shows up, pass debug: true to init (or debug={true} to <LaunchBuddy />) and reload the page to check the browser console for delivery failures. Then list every file you changed.
 ```
 
 ## Privacy
