@@ -1,0 +1,84 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SDK path allowlist > preserves event payloads, identity, and navigation without the optional attribute 1`] = `
+{
+  "anonymousId": "00000000-0000-4000-8000-000000000001",
+  "cookie": "lb_aid=00000000-0000-4000-8000-000000000001; Path=/; SameSite=Lax; Max-Age=31536000; Secure",
+  "requests": [
+    {
+      "body": {
+        "anonymousId": "00000000-0000-4000-8000-000000000001",
+        "eventId": "00000000-0000-4000-8000-000000000003",
+        "locale": "en-US",
+        "occurredAt": "2026-10-31T12:00:00.000Z",
+        "path": "/pricing",
+        "projectKey": "lb_public_test_1234567890",
+        "referrerOrigin": "https://news.ycombinator.com",
+        "sdk": {
+          "name": "@launch-buddy/next",
+          "version": "0.1.0",
+        },
+        "sessionId": "00000000-0000-4000-8000-000000000002",
+        "type": "page_view",
+        "version": 1,
+      },
+      "url": "https://launchbuddy.points-playground.com/api/v1/events",
+    },
+    {
+      "body": {
+        "anonymousId": "00000000-0000-4000-8000-000000000001",
+        "eventId": "00000000-0000-4000-8000-000000000004",
+        "locale": "en-US",
+        "occurredAt": "2026-10-31T12:00:00.000Z",
+        "path": "/apps/private/home",
+        "projectKey": "lb_public_test_1234567890",
+        "referrerOrigin": "https://news.ycombinator.com",
+        "sdk": {
+          "name": "@launch-buddy/next",
+          "version": "0.1.0",
+        },
+        "sessionId": "00000000-0000-4000-8000-000000000002",
+        "type": "page_view",
+        "version": 1,
+      },
+      "url": "https://launchbuddy.points-playground.com/api/v1/events",
+    },
+    {
+      "body": {
+        "anonymousId": "00000000-0000-4000-8000-000000000001",
+        "eventId": "00000000-0000-4000-8000-000000000005",
+        "locale": "en-US",
+        "occurredAt": "2026-10-31T12:00:00.000Z",
+        "projectKey": "lb_public_test_1234567890",
+        "sdk": {
+          "name": "@launch-buddy/next",
+          "version": "0.1.0",
+        },
+        "sessionId": "00000000-0000-4000-8000-000000000002",
+        "type": "heartbeat",
+        "version": 1,
+      },
+      "url": "https://launchbuddy.points-playground.com/api/v1/events",
+    },
+    {
+      "body": {
+        "anonymousId": "00000000-0000-4000-8000-000000000001",
+        "eventId": "00000000-0000-4000-8000-000000000006",
+        "locale": "en-US",
+        "occurredAt": "2026-10-31T12:00:00.000Z",
+        "path": "/settings",
+        "projectKey": "lb_public_test_1234567890",
+        "referrerOrigin": "https://news.ycombinator.com",
+        "sdk": {
+          "name": "@launch-buddy/next",
+          "version": "0.1.0",
+        },
+        "sessionId": "00000000-0000-4000-8000-000000000002",
+        "type": "page_view",
+        "version": 1,
+      },
+      "url": "https://launchbuddy.points-playground.com/api/v1/events",
+    },
+  ],
+}
+`;

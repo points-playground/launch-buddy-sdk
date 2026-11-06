@@ -1,0 +1,43 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'web-v*'
+      - 'server-v*'
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Verify package tag
+        id: package
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const tag = process.env.GITHUB_REF_NAME;
+          const match = /^(web|server)-v(\d+\.\d+\.\d+)$/.exec(tag);
+          if (!match) throw new Error('Invalid release tag');
+          const [, name, version] = match;
+          const manifest = JSON.parse(readFileSync(`packages/${name}/package.json`, 'utf8'));
+          if (manifest.version !== version) throw new Error('Tag and package version differ');
+          appendFileSync(process.env.GITHUB_OUTPUT, `directory=packages/${name}\n`);
+          JS
+      - run: npm publish --provenance --access public
+        working-directory: ${{ steps.package.outputs.directory }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

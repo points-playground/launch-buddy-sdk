@@ -1,0 +1,6 @@
+Add Launch Buddy to this app so I can watch my launch.
+1. Install @launch-buddy/web and @launch-buddy/server with the package manager this repo uses.
+2. For React or Next.js, render <LaunchBuddy projectKey="lb_public_your_project_key" /> from @launch-buddy/web/react once in the root layout. For plain JavaScript, call init({ projectKey: "lb_public_your_project_key" }) from @launch-buddy/web once in the browser. Replace the placeholder with my project's public key.
+3. Create a server-only client with createLaunchBuddyServer() from @launch-buddy/server, using LAUNCH_BUDDY_SERVER_KEY from the server environment. Find the code that creates a new account (Better Auth, Clerk or your own). Right after it succeeds, call client.signup({ userId, anonymousId: anonymousIdFrom(request) }). For Better Auth, use createBetterAuthSignupAfterHook(client). For Clerk, call trackVerifiedClerkWebhook(client, { event, webhookId }) only after verifying its signature.
+4. In your Stripe webhook, after the signature check passes, call trackVerifiedStripeEvent(client, { event }) with the verified event. It extracts the amount and currency. Send no emails and no card details. Never expose the server key in browser code.
+5. Run the app, open the home page and check that the visit shows up in Launch Buddy. Then list every file you changed.
