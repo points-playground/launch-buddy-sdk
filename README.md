@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <LaunchBuddy projectKey="lb_public_your_project_key" />
+        <LaunchBuddy projectKey={process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY!} />
         {children}
       </body>
     </html>
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-Replace the placeholder with your project's public key. The client component renders nothing and starts tracking after mount. It works with React 18 and 19 and is safe during server rendering. It observes History API navigation and `popstate`, so Next.js route changes need no router dependency. Query and hash changes alone do not create another page view.
+Set `NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY` in `.env.local` to your project's test key for local development. Use your project's live key in production. Localhost belongs on the test key, not the live key. Put `LAUNCH_BUDDY_SERVER_KEY` in `.env.local` without a `NEXT_PUBLIC_` prefix, and use the matching server key for each environment. The client component renders nothing and starts tracking after mount. It works with React 18 and 19 and is safe during server rendering. It observes History API navigation and `popstate`, so Next.js route changes need no router dependency. Query and hash changes alone do not create another page view.
 
 Render it once. Initialization lasts for the document's lifetime, including after component unmount. React Strict Mode and repeated `init` calls reuse the first client and configuration. Use a full page reload to change projects or options. Existing script-tag installations still work; if both integrations are present, the first one initialized owns tracking.
 
@@ -42,8 +42,10 @@ Render it once. Initialization lasts for the document's lifetime, including afte
 ```ts
 import { init } from '@launch-buddy/web';
 
-const client = init({ projectKey: 'lb_public_your_project_key' });
+const client = init({ projectKey: process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY });
 ```
+
+For plain JavaScript, configure your bundler to expose `NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY` through its environment variable support.
 
 `init` returns a client with `anonymousId()`, `pageView()`, `heartbeat()`, and `version`, or `undefined` on the server or for invalid options. It sends the first page view automatically. It sends heartbeats every 30 seconds while visible and when the page becomes visible.
 
@@ -54,7 +56,7 @@ Optional settings are `endpoint`, `debug`, and `pathPrefixes`. The default endpo
 Import server helpers from `@launch-buddy/server`. There is no `@launch-buddy/web/server` export: two installs keep server dependencies and Node crypto outside the browser package.
 
 ```ts
-// lib/launch-buddy.ts — import only on your server
+// lib/launch-buddy.ts: import only on your server
 import { createLaunchBuddyServer } from '@launch-buddy/server';
 
 const serverKey = process.env.LAUNCH_BUDDY_SERVER_KEY;
@@ -96,11 +98,11 @@ Copy this prompt into your coding agent:
 
 ```text
 Add Launch Buddy to this app so I can watch my launch.
-1. Install @launch-buddy/web and @launch-buddy/server with the package manager this repo uses.
-2. For React or Next.js, render <LaunchBuddy projectKey="lb_public_your_project_key" /> from @launch-buddy/web/react once in the root layout. For plain JavaScript, call init({ projectKey: "lb_public_your_project_key" }) from @launch-buddy/web once in the browser. Replace the placeholder with my project's public key.
-3. Create a server-only client with createLaunchBuddyServer() from @launch-buddy/server, using LAUNCH_BUDDY_SERVER_KEY from the server environment. Find the code that creates a new account (Better Auth, Clerk or your own). Right after it succeeds, call client.signup({ userId, anonymousId: anonymousIdFrom(request) }). For Better Auth, use createBetterAuthSignupAfterHook(client). For Clerk, call trackVerifiedClerkWebhook(client, { event, webhookId }) only after verifying its signature.
-4. In your Stripe webhook, after the signature check passes, call trackVerifiedStripeEvent(client, { event }) with the verified event. It extracts the amount and currency. Send no emails and no card details. Never expose the server key in browser code.
-5. Run the app, open the home page and check that the visit shows up in Launch Buddy. Then list every file you changed.
+1. Install @launch-buddy/web with the package manager this repo uses. Install @launch-buddy/server only if this site has a backend that records signups or payments.
+2. Read the browser key from NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY. Set it to my project's test key in .env.local for local development and to my project's live key in the production environment. Localhost belongs on the test key, not the live key. For React or Next.js, render <LaunchBuddy projectKey={process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY!} /> from @launch-buddy/web/react once in the root layout. For plain JavaScript, call init({ projectKey: process.env.NEXT_PUBLIC_LAUNCH_BUDDY_PROJECT_KEY }) from @launch-buddy/web once in the browser, using the bundler's environment variable support.
+3. If the backend records signups or payments, put LAUNCH_BUDDY_SERVER_KEY in .env.local without a NEXT_PUBLIC_ prefix. Use the matching test server key locally and live server key in the production server environment. Create a server-only client with createLaunchBuddyServer() from @launch-buddy/server, using LAUNCH_BUDDY_SERVER_KEY from the server environment. If the backend creates accounts, find that code (Better Auth, Clerk or your own). Right after it succeeds, call client.signup({ userId, anonymousId: anonymousIdFrom(request) }). For Better Auth, use createBetterAuthSignupAfterHook(client). For Clerk, call trackVerifiedClerkWebhook(client, { event, webhookId }) only after verifying its signature.
+4. If the backend has a Stripe webhook, after the signature check passes, call trackVerifiedStripeEvent(client, { event }) with the verified event. It extracts the amount and currency. Send no emails and no card details. Never expose the server key in browser code.
+5. Run the app and open the home page. Ask me to confirm that the visit shows up in Launch Buddy, since you cannot see my dashboard. Then list every file you changed.
 ```
 
 ## Privacy
