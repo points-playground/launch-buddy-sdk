@@ -122,7 +122,7 @@ pnpm check
 
 Checks cover type declarations, lint, legacy request parity, browser storage guards, React SSR and navigation, server behavior, packed ESM and CJS consumers, and the browser entry's gzip budget of less than 3 KB. Packed-consumer fixtures live under `.cache` in this checkout and are removed after each run.
 
-Release automation is prepared for version tags but has not run. Publishing requires approval and an `NPM_TOKEN` repository secret. Trusted publishing through OIDC replaces the token after the first publish. See [release instructions](docs/releasing.md).
+Releases run from version tags. Publishing requires approval and uses npm trusted publishing through GitHub Actions OIDC, without an npm token. Provenance is generated automatically. See [release instructions](docs/releasing.md).
 
 ## Licence
 
