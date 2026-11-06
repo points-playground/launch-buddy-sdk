@@ -59,7 +59,7 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
   window.__launchBuddyLoaded = true;
 
   function allowedPath() {
-    var path = window.location.pathname || "/";
+    const path = window.location.pathname || "/";
     return pathPrefixes === null || pathPrefixes.some(function (prefix) {
       return path === prefix || (prefix !== "/" && path.indexOf(prefix + "/") === 0);
     });
@@ -70,18 +70,18 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
       return window.crypto.randomUUID();
     }
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (character) {
-      var random = Math.random() * 16 | 0;
-      var value = character === "x" ? random : (random & 3 | 8);
+      const random = Math.random() * 16 | 0;
+      const value = character === "x" ? random : (random & 3 | 8);
       return value.toString(16);
     });
   }
 
   function storedId(storageName: "localStorage" | "sessionStorage", key: string): string {
     try {
-      var storage = window[storageName];
-      var current = storage.getItem(key);
+      const storage = window[storageName];
+      const current = storage.getItem(key);
       if (current) return current;
-      var created = id();
+      const created = id();
       storage.setItem(key, created);
       return created;
     } catch {
@@ -90,11 +90,11 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
   }
 
   function visitorId() {
-    var current;
+    let current;
     try { current = window.localStorage.getItem("launch_buddy_visitor_id"); } catch {}
     if (!current) {
       try {
-        var match = (document.cookie || "").match(/(?:^|;\s*)lb_aid=([0-9a-f-]+)(?:;|$)/);
+        const match = (document.cookie || "").match(/(?:^|;\s*)lb_aid=([0-9a-f-]+)(?:;|$)/);
         if (match && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(match[1]!)) current = match[1];
       } catch {}
     }
@@ -107,13 +107,13 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
     return current;
   }
 
-  var checkToken: string | undefined;
-  var checkExpiresAt = 0;
+  let checkToken: string | undefined;
+  let checkExpiresAt = 0;
   try {
-    var checkUrl = new URL(window.location.href);
-    var checkValues = checkUrl.searchParams.getAll("lb_check");
+    const checkUrl = new URL(window.location.href);
+    const checkValues = checkUrl.searchParams.getAll("lb_check");
     if (checkValues.length === 1 && /^[a-z0-9]{6,8}\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{22}$/.test(checkValues[0]!)) {
-      var expiry = parseInt(checkValues[0]!.split(".")[0]!, 36) * 1000;
+      const expiry = parseInt(checkValues[0]!.split(".")[0]!, 36) * 1000;
       if (expiry > Date.now() && expiry <= Date.now() + 15 * 60 * 1000) { checkToken = checkValues[0]!; checkExpiresAt = expiry; }
     }
     if (checkValues.length) {
@@ -122,12 +122,12 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
     }
   } catch {}
 
-  var campaign: Record<string, string> = {};
-  var adClicks: string[] = [];
+  const campaign: Record<string, string> = {};
+  const adClicks: string[] = [];
   try {
-    var landing = new URL(window.location.href).searchParams;
+    const landing = new URL(window.location.href).searchParams;
     ["utm_source", "utm_medium", "utm_campaign", "ref", "via", "source"].forEach(function (key) {
-      var value = (landing.get(key) || "").trim().toLowerCase();
+      const value = (landing.get(key) || "").trim().toLowerCase();
       if (value && value.length <= 64 && /^[a-z][a-z0-9 ._-]*$/.test(value) && !/\d{5}/.test(value)) campaign[key] = value;
     });
     [["gclid", "google"], ["fbclid", "meta"], ["msclkid", "microsoft"], ["twclid", "x"]].forEach(function (click) {
@@ -135,8 +135,8 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
     });
   } catch {}
 
-  var anonymousId = visitorId();
-  var sessionId = storedId("sessionStorage", "launch_buddy_session_id");
+  const anonymousId = visitorId();
+  const sessionId = storedId("sessionStorage", "launch_buddy_session_id");
 
   function referrerOrigin() {
     if (!document.referrer) return undefined;
@@ -150,7 +150,7 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
   function send(type: "page_view" | "heartbeat"): Promise<DeliveryResult> {
     if (!allowedPath()) return Promise.resolve({ status: "skipped", reason: "excluded_path" });
     if (checkToken && Date.now() >= checkExpiresAt) checkToken = undefined;
-    var event: BrowserEvent = {
+    const event: BrowserEvent = {
       version: 1,
       eventId: id(),
       type: type,
@@ -167,7 +167,7 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
       event.path = window.location.pathname || "/";
       if (Object.keys(campaign).length) event.campaign = campaign;
       if (adClicks.length) event.adClicks = adClicks;
-      var origin = referrerOrigin();
+      const origin = referrerOrigin();
       if (origin) event.referrerOrigin = origin;
     }
 
@@ -191,13 +191,13 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
     });
   }
 
-  var previousPath: string | null = null;
+  let previousPath: string | null = null;
   function pageView(): Promise<DeliveryResult> {
     if (!allowedPath()) {
       previousPath = null;
       return Promise.resolve({ status: "skipped", reason: "excluded_path" });
     }
-    var path = window.location.pathname || "/";
+    const path = window.location.pathname || "/";
     if (path === previousPath) {
       return Promise.resolve({ status: "skipped", reason: "duplicate_path" });
     }
@@ -207,11 +207,11 @@ export function init(options: LaunchBuddyOptions): LaunchBuddyClient | undefined
 
   function wrapHistory(method: "pushState" | "replaceState") {
     try {
-      var history = window.history;
-      var original = history[method];
+      const history = window.history;
+      const original = history[method];
       if (typeof original !== "function") return;
       history[method] = function (...args: Parameters<History["pushState"]>) {
-        var result = original.apply(this, args);
+        const result = original.apply(this, args);
         window.setTimeout(pageView, 0);
         return result;
       };

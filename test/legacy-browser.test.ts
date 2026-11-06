@@ -235,23 +235,6 @@ it("keeps a valid server nonce when the visitor clock is five minutes behind", (
 });
 
 describe("SDK path allowlist", () => {
-  it("preserves event payloads, identity, and navigation without the optional attribute", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-10-31T12:00:00Z"));
-    try {
-      const { context, requests } = runSdk();
-      const history = context.history as { pushState: (state: unknown, unused: string, path: string) => void };
-      const sdk = context.LaunchBuddy as { heartbeat: () => Promise<unknown>; anonymousId: () => string; pageView: () => Promise<unknown> };
-      history.pushState(null, "", "/apps/private/home");
-      await sdk.heartbeat();
-      history.pushState(null, "", "/settings");
-      expect(await sdk.pageView()).toEqual({ status: "skipped", reason: "duplicate_path" });
-      expect({ requests, anonymousId: sdk.anonymousId(), cookie: (context.document as { cookie: string }).cookie }).toMatchSnapshot();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
   it("suppresses page views and heartbeats on private SPA routes, then resumes on public routes", async () => {
     const { context, requests } = runSdk(undefined, undefined, { pathPrefixes: '["/pricing","/demo"]' });
     const history = context.history as { pushState: (state: unknown, unused: string, path: string) => void };

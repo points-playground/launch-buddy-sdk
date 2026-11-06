@@ -284,8 +284,7 @@ describe("identity bridge", () => {
     signup.mockClear();
     await hook({ id: "user" }, null);
     expect(signup.mock.calls[0]![0]).not.toHaveProperty("anonymousId");
-    await createBetterAuthSignupAfterHook(client, { getJourneyIdentifiers: () => ({ anonymousId: "legacy-id", sessionId: "session" }) })
-      ({ id: "user" }, { headers: new Headers({ cookie: `lb_aid=${aid}` }) });
+    await createBetterAuthSignupAfterHook(client, { getJourneyIdentifiers: () => ({ anonymousId: "legacy-id", sessionId: "session" }) })({ id: "user" }, { headers: new Headers({ cookie: `lb_aid=${aid}` }) });
     expect(signup.mock.calls[1]![0]).toMatchObject({ anonymousId: "legacy-id", sessionId: "session" });
   });
   it("reads Clerk metadata while omitting invalid values and raw fields", async () => {
