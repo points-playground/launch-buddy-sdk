@@ -23,7 +23,7 @@ return function runSdk(
   fetchResult: "success" | "rejected" | "network-error" = "success",
   options: { endpoint?: string; debug?: boolean; pathPrefixes?: string; cookie?: string; storedId?: string; blockedStorage?: boolean; blockedSession?: "getter" | "read" | "write"; sessionId?: string; blockedHistory?: "getter" | "method-getter" | "readonly"; blockedCookie?: boolean; protocol?: string; href?: string } = {},
 ) {
-  const requests: Array<{ url: string; body: Record<string, unknown>; options: Record<string, unknown> }> = [];
+  const requests: Array<{ url: string; body: Record<string, unknown>; options: Record<string, unknown>; rawBody: string }> = [];
   const listeners = new Map<string, () => void>();
   let uuid = 0;
 
@@ -42,7 +42,7 @@ return function runSdk(
     navigator: { language: "en-US", userAgent: "private-device-UA" },
     fetch: vi.fn((url: string, options: { body: string; [key: string]: unknown }) => {
       const { body, ...requestOptions } = options;
-      requests.push({ url, body: JSON.parse(body) as Record<string, unknown>, options: requestOptions });
+      requests.push({ url, body: JSON.parse(body) as Record<string, unknown>, options: requestOptions, rawBody: body });
       if (fetchResult === "network-error") return Promise.reject(new Error("offline"));
       return Promise.resolve({
         ok: fetchResult === "success",
@@ -313,12 +313,13 @@ describe("hosted SDK restricted browser APIs", () => {
 
 });
 
-it("matches the original fixture requests, cookie, and stored IDs byte for byte", async () => {
+it("matches the original fixture request bytes and fetch settings", async () => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-31T12:00:00Z"));
   try {
     for (const options of [
       {},
+      { endpoint: "" },
       { href: "https://site.example/pricing?utm_source=Newsletter&gclid=private&email=private@example.com" },
       { blockedStorage: true, blockedCookie: true, blockedSession: "getter" as const },
       { pathPrefixes: '["/pricing"]', sessionId: "existing-session" },

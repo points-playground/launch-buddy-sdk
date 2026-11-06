@@ -60,7 +60,7 @@ try {
   for (const name of ['web', 'server']) {
     run('npm', ['pack', '--pack-destination', root], join(directory, 'packages', name));
   }
-  writeFileSync(join(root, 'package.json'), JSON.stringify({ private: true, dependencies: { react: '19.2.1', 'react-dom': '19.2.1' } }));
+  writeFileSync(join(root, 'package.json'), JSON.stringify({ private: true, dependencies: { react: '19.2.1', 'react-dom': '19.2.1', '@types/react': '19.2.7', '@types/react-dom': '19.2.3', '@types/node': '22.19.1' } }));
   run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', './launch-buddy-web-0.1.0.tgz', './launch-buddy-server-0.5.0.tgz']);
   writeFileSync(join(root, 'consumer.cjs'), consumer);
   assert.equal(run(process.execPath, ['consumer.cjs']), 'packed consumer OK\n');

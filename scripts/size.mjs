@@ -1,5 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-const bytes = gzipSync(readFileSync(new URL('../packages/web/dist/index.js', import.meta.url))).length;
-console.log(`Browser entry: ${bytes} bytes gzip (budget: <3072 bytes)`);
-if (bytes >= 3072) throw new Error('Browser entry exceeds 3 KB gzip');
+for (const name of ['index.js', 'index.cjs', 'react.js', 'react.cjs']) {
+  const source = readFileSync(new URL(`../packages/web/dist/${name}`, import.meta.url));
+  const bytes = gzipSync(source).length;
+  console.log(`${name}: ${source.length} bytes, ${bytes} bytes gzip`);
+  if (name === 'index.js' && bytes >= 3072) throw new Error('Browser entry exceeds 3 KB gzip');
+}
