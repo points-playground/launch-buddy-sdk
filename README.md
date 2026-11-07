@@ -13,7 +13,7 @@ npm install @launch-buddy/server
 
 Use the public key (`lb_public_…`) from your project in browser code. Store the server key (`lb_secret_…`) in `LAUNCH_BUDDY_SERVER_KEY` on your server.
 
-The packages are prepared for npm. They are not published yet. Until the first release, build this repository and install local tarballs with `npm pack` in each package directory.
+Both packages are published on npm: [`@launch-buddy/web`](https://www.npmjs.com/package/@launch-buddy/web) and [`@launch-buddy/server`](https://www.npmjs.com/package/@launch-buddy/server).
 
 ## Next.js App Router
 
